@@ -100,13 +100,17 @@ namespace Task5.Controllers
 
         // POST: Customer/Create
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public ActionResult Create(CustomerViewModel model, int? page)
         {
             try
             {
-                // TODO: Add insert logic here
-                customerService.Create(mapper.Map<CustomerViewModel, CustomerDTO>(model));
-                return RedirectToAction("Index", new { page = page });
+                if (ModelState.IsValid)
+                {
+                    customerService.Create(mapper.Map<CustomerViewModel, CustomerDTO>(model));
+                    return RedirectToAction("Index", new { page = page });
+                }
+                return View();
             }
             catch
             {
@@ -124,12 +128,17 @@ namespace Task5.Controllers
 
         // POST: Customer/Edit/5
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public ActionResult Edit(CustomerViewModel model, int? page)
         {
             try
             {
-                customerService.Update(mapper.Map<CustomerViewModel, CustomerDTO>(model));
-                return RedirectToAction("Index", new { page = page });
+                if (ModelState.IsValid)
+                {
+                    customerService.Update(mapper.Map<CustomerViewModel, CustomerDTO>(model));
+                    return RedirectToAction("Index", new { page = page });
+                }
+                return View();
             }
             catch
             {
@@ -147,6 +156,7 @@ namespace Task5.Controllers
 
         // POST: Customer/Delete/5
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public ActionResult Delete(int id, FormCollection formCollection, int? page)
         {
             try
@@ -158,6 +168,18 @@ namespace Task5.Controllers
             {
                 return View();
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && customerService != null)
+            {
+                customerService.Dispose();
+                orderService.Dispose();
+                customerService = null;
+                orderService = null;                
+            }
+            base.Dispose(disposing);
         }
     }
 }

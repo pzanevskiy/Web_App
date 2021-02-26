@@ -5,7 +5,7 @@ using Task5.BL.DTO;
 
 namespace Task5.BL.Service.Interfaces
 {
-    public interface IProductService
+    public interface IProductService : IDisposable
     {
         IEnumerable<ProductDTO> GetAll();
         ProductDTO FindById(int id);

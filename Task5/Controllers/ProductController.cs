@@ -55,19 +55,21 @@ namespace Task5.Controllers
         {
             try
             {
-
-                var products = mapper.Map<IEnumerable<ProductDTO>, IEnumerable<ProductViewModel>>(productService.GetAll());
-                if (model.Name != null)
+                if (ModelState.IsValid)
                 {
-                    products = products.Where(x => x.Name.ToLower().Contains(model.Name.ToLower()));
-                }
-                if (model.Price != null)
-                {
-                    products = products.Where(x => x.Price.Equals(model.Price));
-                }
-                return PartialView("List", products.ToPagedList(1, products.Count() == 0 ? 1 : products.Count()));
+                    var products = mapper.Map<IEnumerable<ProductDTO>, IEnumerable<ProductViewModel>>(productService.GetAll());
+                    if (model.Name != null)
+                    {
+                        products = products.Where(x => x.Name.ToLower().Contains(model.Name.ToLower()));
+                    }
+                    if (model.Price != null)
+                    {
+                        products = products.Where(x => x.Price.Equals(model.Price));
+                    }
+                    return PartialView("List", products.ToPagedList(1, products.Count() == 0 ? 1 : products.Count()));
 
-
+                }
+                return View();
             }
             catch (Exception e)
             {
@@ -83,7 +85,7 @@ namespace Task5.Controllers
         }
 
         // GET: Product/Create
-        [Authorize]
+        [Authorize(Roles = "admin")]
         public ActionResult Create(int? page)
         {
             var model = new ProductViewModel();
@@ -93,14 +95,17 @@ namespace Task5.Controllers
 
         // POST: Product/Create
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public ActionResult Create(ProductViewModel model, int? page)
         {
             try
             {
-                productService.Create(mapper.Map<ProductViewModel, ProductDTO>(model));
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index", new { page = page });
+                if (ModelState.IsValid)
+                {
+                    productService.Create(mapper.Map<ProductViewModel, ProductDTO>(model));
+                    return RedirectToAction("Index", new { page = page });
+                }
+                return View();
             }
             catch
             {
@@ -109,21 +114,27 @@ namespace Task5.Controllers
         }
 
         // GET: Product/Edit/5
-        [Authorize]
-        public ActionResult Edit(int id)
+        [Authorize(Roles = "admin")]
+        public ActionResult Edit(int id,int?page)
         {
+            ViewBag.CurrentPage = page;
             return View(mapper.Map<ProductDTO, ProductViewModel>(productService.FindById(id)));
         }
 
         // POST: Product/Edit/5
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public ActionResult Edit(ProductViewModel model, int? page)
         {
             try
             {
+                if (ModelState.IsValid)
+                {
+                    productService.Update(mapper.Map<ProductViewModel, ProductDTO>(model));
+                    return RedirectToAction("Index", new { page = page });
+                }
+                return View();
                 // TODO: Add update logic here
-                productService.Update(mapper.Map<ProductViewModel, ProductDTO>(model));
-                return RedirectToAction("Index", new { page = page });
             }
             catch
             {
@@ -132,18 +143,20 @@ namespace Task5.Controllers
         }
 
         // GET: Product/Delete/5
-        public ActionResult Delete(int id)
+        [Authorize(Roles = "admin")]
+        public ActionResult Delete(int id,int? page)
         {
+            ViewBag.CurrentPage = page;
             return View(mapper.Map<ProductDTO, ProductViewModel>(productService.FindById(id)));
         }
 
         // POST: Product/Delete/5
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public ActionResult Delete(int id, FormCollection collection, int? page)
         {
             try
             {
-                // TODO: Add delete logic here
                 productService.Delete(id);
                 return RedirectToAction("Index", new { page = page });
             }
@@ -151,6 +164,16 @@ namespace Task5.Controllers
             {
                 return View();
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && productService != null)
+            {
+                productService.Dispose();               
+                productService = null;
+            }
+            base.Dispose(disposing);
         }
     }
 }

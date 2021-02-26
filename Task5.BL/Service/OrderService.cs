@@ -13,17 +13,20 @@ namespace Task5.BL.Service
 {
     public class OrderService : IOrderService
     {
+        private bool _disposed = false;
+        private IMapper _mapper;
+
         private IUnitOfWork Database { get; set; }
-        IMapper mapper;
+
         public OrderService(IUnitOfWork uow)
         {
             Database = uow;
-            mapper = new Mapper(MapperConfig.Configure());
+            _mapper = new Mapper(MapperConfig.Configure());
         }
 
         public OrderDTO FindById(int id)
         {
-            var order = mapper.Map<Order, OrderDTO>(Database.Orders.Get(x => x.Id.Equals(id)));
+            var order = _mapper.Map<Order, OrderDTO>(Database.Orders.Get(x => x.Id.Equals(id)));
             return order;
         }
 
@@ -78,23 +81,39 @@ namespace Task5.BL.Service
 
         public IEnumerable<OrderDTO> GetAll()
         {
-            return mapper.Map<IEnumerable<Order>, IEnumerable<OrderDTO>>(Database.Orders.Get());
-        }
-
-        public void Dispose()
-        {
-            Database = null;
-            GC.SuppressFinalize(this);
+            return _mapper.Map<IEnumerable<Order>, IEnumerable<OrderDTO>>(Database.Orders.Get());
         }
 
         public IEnumerable<OrderDTO> GetOrdersByCustomerId(int id)
         {
-            return mapper.Map<IEnumerable<Order>, IEnumerable<OrderDTO>>(Database.Orders.Get().Where(x => x.Customer.Id.Equals(id)));
+            return _mapper.Map<IEnumerable<Order>, IEnumerable<OrderDTO>>(Database.Orders.Get().Where(x => x.Customer.Id.Equals(id)));
         }
 
         public IEnumerable<OrderDTO> GetOrdersByManagerId(int id)
         {
-            return mapper.Map<IEnumerable<Order>, IEnumerable<OrderDTO>>(Database.Orders.Get().Where(x => x.Manager.Id.Equals(id)));
+            return _mapper.Map<IEnumerable<Order>, IEnumerable<OrderDTO>>(Database.Orders.Get().Where(x => x.Manager.Id.Equals(id)));
         }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    Database.Dispose();
+                }
+                _disposed = true;
+            }
+        }
+
+        ~OrderService() => Dispose(false);
+       
+
     }
 }

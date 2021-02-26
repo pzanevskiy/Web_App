@@ -124,7 +124,7 @@ namespace Task5.Controllers
             {
                 model.Customers = new SelectList(mapper.Map<IEnumerable<CustomerDTO>, IEnumerable<CustomerViewModel>>(customerService.GetAll()), "Nickname", "Nickname");
                 model.Products = new SelectList(mapper.Map<IEnumerable<ProductDTO>, IEnumerable<ProductViewModel>>(productService.GetAll()), "Name", "Name");
-                model.Managers = new SelectList(mapper.Map<IEnumerable<ManagerDTO>, IEnumerable<ManagerViewModel>>(managerService.GetAll()), "FirstName", "FirstName");
+                model.Managers = new SelectList(mapper.Map<IEnumerable<ManagerDTO>, IEnumerable<ManagerViewModel>>(managerService.GetAll()), "LastName", "LastName");
 
                 return View(model);
             }
@@ -153,8 +153,11 @@ namespace Task5.Controllers
         {
             try
             {
-                orderService.Update(mapper.Map<OrderViewModel, OrderDTO>(model));
-                return RedirectToAction("Index", new { page = page });
+                if (ModelState.IsValid)
+                {
+                    orderService.Update(mapper.Map<OrderViewModel, OrderDTO>(model));
+                    return RedirectToAction("Index", new { page = page });
+                }return View();
             }
             catch
             {
@@ -183,6 +186,22 @@ namespace Task5.Controllers
             {
                 return View();
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && orderService != null)
+            {
+                managerService.Dispose();
+                orderService.Dispose();
+                customerService.Dispose();
+                productService.Dispose();
+                managerService = null;
+                orderService = null;
+                customerService = null;
+                productService = null;
+            }
+            base.Dispose(disposing);
         }
     }
 }

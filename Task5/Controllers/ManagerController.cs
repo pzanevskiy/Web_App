@@ -23,6 +23,7 @@ namespace Task5.Controllers
         IMapper mapper;
         IManagerService managerService;
         IOrderService orderService;
+
         public ManagerController()
         {
             uow = new EFUnitOfWork();
@@ -38,7 +39,6 @@ namespace Task5.Controllers
             return View();
         }
 
-        /*mapper.Map<IEnumerable<ManagerDTO>, IEnumerable<ManagerViewModel>>(managerService.GetAll())*/
         public ActionResult Managers(int? page)
         {
             try
@@ -67,9 +67,9 @@ namespace Task5.Controllers
                     {
                         managers = managers.Where(x => x.LastName.ToLower().Contains(model.LastName.ToLower()));
                     }
-                    if (model.Rating != 0)
+                    if (model.Rating != null)
                     {
-                        managers = managers.Where(x => x.Rating.Equals(model.Rating));
+                        managers = managers.Where(x => x.Rating<=model.Rating);
                     }
                     return PartialView("List", managers.ToPagedList(1, managers.Count() == 0 ? 1 : managers.Count()));
 
@@ -85,17 +85,19 @@ namespace Task5.Controllers
         [HttpGet]
         public JsonResult GetChartData()
         {
-            var item = uow.Managers.Get().Select(x => new object[] { x.LastName, x.Order.Count }).ToArray();
+            var item =managerService.GetManagersWithOrdersCount();
 
             return Json(item, JsonRequestBehavior.AllowGet);
         }
         // GET: Manager/Details/5
+        [Authorize]
         public ActionResult Details(int id)
         {
             return PartialView(mapper.Map<IEnumerable<OrderDTO>, IEnumerable<OrderViewModel>>(orderService.GetOrdersByManagerId(id)));
         }
 
         // GET: Manager/Create
+        [Authorize(Roles = "admin")]
         public ActionResult Create(int? page)
         {
             var model = new ManagerViewModel();
@@ -105,13 +107,18 @@ namespace Task5.Controllers
 
         // POST: Manager/Create
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public ActionResult Create(ManagerViewModel model, int? page)
         {
             try
             {
+                if (ModelState.IsValid)
+                {
+                    managerService.Create(mapper.Map<ManagerViewModel, ManagerDTO>(model));
+                    return RedirectToAction("Index", new { page = page });
+                }
+                return View();
                 // TODO: Add insert logic here
-                managerService.Create(mapper.Map<ManagerViewModel, ManagerDTO>(model));
-                return RedirectToAction("Index", new { page = page });
             }
             catch
             {
@@ -120,6 +127,7 @@ namespace Task5.Controllers
         }
 
         // GET: Manager/Edit/5
+        [Authorize(Roles = "admin")]
         public ActionResult Edit(int id, int? page)
         {
             ViewBag.CurrentPage = page;
@@ -128,12 +136,17 @@ namespace Task5.Controllers
 
         // POST: Manager/Edit/5
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public ActionResult Edit(ManagerViewModel model, int? page)
         {
             try
             {
-                managerService.Update(mapper.Map<ManagerViewModel, ManagerDTO>(model));
-                return RedirectToAction("Index", new { page = page });
+                if (ModelState.IsValid)
+                {
+                    managerService.Update(mapper.Map<ManagerViewModel, ManagerDTO>(model));
+                    return RedirectToAction("Index", new { page = page });
+                }
+                return View();
             }
             catch
             {
@@ -142,6 +155,7 @@ namespace Task5.Controllers
         }
 
         // GET: Manager/Delete/5
+        [Authorize(Roles = "admin")]
         public ActionResult Delete(int id, int? page)
         {
             ViewBag.CurrentPage = page;
@@ -150,6 +164,7 @@ namespace Task5.Controllers
 
         // POST: Manager/Delete/5
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public ActionResult Delete(int id, FormCollection formCollection, int? page)
         {
             try
@@ -161,6 +176,18 @@ namespace Task5.Controllers
             {
                 return View();
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && managerService != null)
+            {
+                managerService.Dispose();
+                orderService.Dispose();
+                managerService = null;
+                orderService = null;
+            }
+            base.Dispose(disposing);
         }
     }
 }

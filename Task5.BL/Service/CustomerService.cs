@@ -12,29 +12,31 @@ namespace Task5.BL.Service
 {
     public class CustomerService : ICustomerService
     {
+        private bool _disposed = false;
+        private IMapper _mapper;
+
         private IUnitOfWork Database { get; set; }
-        IMapper mapper;
 
         public CustomerService(IUnitOfWork uow)
         {
             Database = uow;
-            mapper = new Mapper(MapperConfig.Configure());
+            _mapper = new Mapper(MapperConfig.Configure());
         }
 
         public IEnumerable<CustomerDTO> GetAll()
         {
-            return mapper.Map<IEnumerable<Customer>, IEnumerable<CustomerDTO>>(Database.Customers.Get());
+            return _mapper.Map<IEnumerable<Customer>, IEnumerable<CustomerDTO>>(Database.Customers.Get());
         }
 
         public CustomerDTO FindById(int id)
         {
-            var customer = mapper.Map<Customer, CustomerDTO>(Database.Customers.Get(x => x.Id.Equals(id)));
+            var customer = _mapper.Map<Customer, CustomerDTO>(Database.Customers.Get(x => x.Id.Equals(id)));
             return customer;
         }
 
         public void Create(CustomerDTO customerDTO)
         {
-            var customer = mapper.Map<CustomerDTO, Customer>(customerDTO);
+            var customer = _mapper.Map<CustomerDTO, Customer>(customerDTO);
             Database.Customers.Add(customer);
             Database.Save();
         }
@@ -48,9 +50,29 @@ namespace Task5.BL.Service
 
         public void Update(CustomerDTO customerDTO)
         {
-            var customer = mapper.Map<CustomerDTO, Customer>(customerDTO);
+            var customer = _mapper.Map<CustomerDTO, Customer>(customerDTO);
             Database.Customers.Update(customer);
             Database.Save();
         }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    Database.Dispose();
+                }
+                _disposed = true;
+            }
+        }
+
+        ~CustomerService() => Dispose(false);
     }
 }

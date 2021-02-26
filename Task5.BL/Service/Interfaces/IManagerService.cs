@@ -5,12 +5,13 @@ using Task5.BL.DTO;
 
 namespace Task5.BL.Service.Interfaces
 {
-    public interface IManagerService
+    public interface IManagerService : IDisposable
     {
         IEnumerable<ManagerDTO> GetAll();
         ManagerDTO FindById(int id);
         void Create(ManagerDTO managerDTO);
         void Delete(int id);
         void Update(ManagerDTO managerDTO);
+        object GetManagersWithOrdersCount();
     }
 }

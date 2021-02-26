@@ -12,29 +12,31 @@ namespace Task5.BL.Service
 {
     public class ProductService : IProductService
     {
+        private bool _disposed = false;
+        private IMapper _mapper;
+
         private IUnitOfWork Database { get; set; }
-        IMapper mapper;
 
         public ProductService(IUnitOfWork uow)
         {
             Database = uow;
-            mapper = new Mapper(MapperConfig.Configure());
+            _mapper = new Mapper(MapperConfig.Configure());
         }
 
         public IEnumerable<ProductDTO> GetAll()
         {
-            return mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(Database.Products.Get());
+            return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(Database.Products.Get());
         }
 
         public ProductDTO FindById(int id)
         {
-            var product = mapper.Map<Product, ProductDTO>(Database.Products.Get(x => x.Id.Equals(id)));
+            var product = _mapper.Map<Product, ProductDTO>(Database.Products.Get(x => x.Id.Equals(id)));
             return product;
         }
 
         public void Create(ProductDTO productDTO)
         {
-            var product = mapper.Map<ProductDTO, Product>(productDTO);
+            var product = _mapper.Map<ProductDTO, Product>(productDTO);
             Database.Products.Add(product);
             Database.Save();
         }
@@ -48,9 +50,29 @@ namespace Task5.BL.Service
 
         public void Update(ProductDTO productDTO)
         {
-            var product = mapper.Map<ProductDTO, Product>(productDTO);
+            var product = _mapper.Map<ProductDTO, Product>(productDTO);
             Database.Products.Update(product);
             Database.Save();
         }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    Database.Dispose();
+                }
+                _disposed = true;
+            }
+        }
+
+        ~ProductService() => Dispose(false);
     }
 }

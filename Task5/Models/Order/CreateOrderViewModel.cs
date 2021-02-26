@@ -9,20 +9,22 @@ namespace Task5.Models.Order
 {
     public class CreateOrderViewModel
     {
+        [Required(ErrorMessage ="Enter value")]
         [Display(Name = "Date")]
         [DataType(DataType.Date)]
         public DateTime Date { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Enter value")]
+        [Display(Name = "Price")]
         public double Price { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Select value")]
         public string Customer { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Select value")]
         public string Product { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Select value")]
         public string Manager { get; set; }
 
         public SelectList Customers;
