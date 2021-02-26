@@ -1,0 +1,86 @@
+﻿@model Task5.Models.Filters.CustomerFilter
+@{
+    ViewBag.Title = "Index";
+}
+
+<div>
+    @using (Ajax.BeginForm("Customers", new AjaxOptions { UpdateTargetId = "customersTable" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <table class="table">
+            <tr>
+                <td>
+                    <div class="editor-label">
+                        @Html.LabelFor(model => model.NickName)
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.NickName)
+                    </div>
+                    <div class="editor-label">
+                        @Html.LabelFor(model => model.PhoneNumber)
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.PhoneNumber)
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="submit" value="Search" />
+                    <input type="button" id="clear" value="Reset" />
+                </td>
+                <td>
+                </td>
+            </tr>
+        </table>
+    }
+    <div id="customersTable">
+    </div>
+    <section id="customerDetailsSection">
+        <div id="customerDetails"></div>
+    </section>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+<script>
+    $(document).ready(function () {
+        getCustomers();
+    });
+
+    $("#clear").on("click", function () {
+        $('#NickName').val('');
+        $('#PhoneNumber').val('');
+            getCustomers();
+     });
+
+
+    function getCustomers() {
+        jQuery.ajax(
+            {
+                url: "@Url.Action("Customers", "Customer")",
+                data: { page:@ViewBag.CurrentPage},
+                type: "GET",
+                success: function (data, textStatus, XHR) {
+                    jQuery("#customersTable").html(data);
+                },
+                dataType: "html"
+            }
+        );
+    }
+
+    showCustomerDetails = function () {
+        $("#customerDetails").show();
+    }
+
+    hideCustomerDetails = function () {
+        $("#customerDetails").hide();
+        $("#customerDetails").html(null);
+    }
+
+</script>
+
+

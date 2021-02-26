@@ -1,0 +1,42 @@
+﻿@model IEnumerable<Task5.Models.Order.OrderViewModel>
+
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col"> @Html.DisplayNameFor(model => model.Date)</th>
+            <th scope="col">@Html.DisplayNameFor(model => model.Price)</th>
+            <th scope="col"> @Html.DisplayNameFor(model => model.Customer)</th>
+            <th scope="col"> @Html.DisplayNameFor(model => model.Product)</th>
+            <th scope="col"> @Html.DisplayNameFor(model => model.Manager)</th>
+        </tr>
+    </thead>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td scope="row">
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td scope="row">
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td scope="row">
+                @Html.DisplayFor(modelItem => item.Customer)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Product)
+            </td>
+            <td scope="row">
+                @Html.DisplayFor(modelItem => item.Manager)
+            </td>
+        </tr>
+    }
+
+</table>
+<p>
+    <button class="btn btn-primary border border-dark rounded-pill" id="hideButton">Hide</button>
+</p>
+<script type="text/javascript">
+    $("#hideButton").click(hideManagerDetails);
+</script>
+

@@ -1,0 +1,56 @@
+﻿@model IPagedList<Task5.Models.Product.ProductViewModel>
+@using PagedList;
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "List";
+}
+
+@if (User.IsInRole("admin"))
+{
+    <p>
+        @Html.ActionLink("Create New", "Create", new { page = ViewBag.CurrentPage }, htmlAttributes: new { @class = "btn btn-success border border-dark rounded-pill" })
+    </p>
+}
+@if (Model != null && Model.Count > 0)
+{
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 ">
+        @foreach (var item in Model)
+        {
+            <div class="col p-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Product #@item.Id</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Name:<span> @item.Name</span></p>
+                        <p>Price:<span> @item.Price$</span></p>
+                    </div>
+                    @if (User.IsInRole("admin"))
+                    {
+                        <div class="card-footer">
+                            <div class="row row-cols-1">
+
+                                @Html.ActionLink("Edit", "Edit", new { id = item.Id, page = ViewBag.CurrentPage }, htmlAttributes: new { @class = "btn btn-warning border border-dark rounded-pill m-1" })
+                                @Html.ActionLink("Delete", "Delete", new { id = item.Id, page = ViewBag.CurrentPage }, htmlAttributes: new { @class = "btn btn-danger border border-dark rounded-pill m-1" })
+
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+    @Html.PagedListPager(Model, page => Url.Action("Products", new { page }), PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { UpdateTargetId = "productsTable" }))
+
+}
+else
+{
+    <div>No records</div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+

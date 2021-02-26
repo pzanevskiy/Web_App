@@ -1,0 +1,87 @@
+﻿@model Task5.Models.Filters.ManagerFilter
+@{
+    ViewBag.Title = "Index";
+}
+
+<div>
+    @using (Ajax.BeginForm("Managers", new AjaxOptions { UpdateTargetId = "managersTable" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <table class="table">
+            <tr>
+                <td>
+                    <div class="editor-label">
+                        @Html.LabelFor(model => model.LastName)
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.LastName)
+                    </div>
+                    <div class="editor-label">
+                        @Html.LabelFor(model => model.Rating)
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.Rating)
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="submit" value="Search" />
+                    <input type="button" id="clear" value="Reset" />
+                </td>
+                <td>
+                </td>
+            </tr>
+        </table>
+    }
+    <div id="managersTable">
+    </div>
+    <div id="piechart">
+        @Html.Partial("Chart", Model)
+    </div>
+    <section id="managerDetailsSection">
+        <div id="managerDetails"></div>
+    </section>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+<script>
+    $(document).ready(function () {
+        getManagers();
+    });
+
+    $("#clear").on("click", function () {
+        $('#LastName').val('');
+        $('#Rating').val('');
+            getManagers();
+     });
+
+
+    function getManagers() {
+        jQuery.ajax(
+            {
+                url: "@Url.Action("Managers", "Manager")",
+                data: { page:@ViewBag.CurrentPage},
+                type: "GET",
+                success: function (data, textStatus, XHR) {
+                    jQuery("#managersTable").html(data);
+                },
+                dataType: "html"
+            }
+        );
+    }
+
+    showManagerDetails = function () {
+        $("#managerDetails").show();
+    }
+
+    hideManagerDetails = function () {
+        $("#managerDetails").hide();
+        $("#managerDetails").html(null);
+    }
+
+</script>

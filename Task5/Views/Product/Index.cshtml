@@ -1,0 +1,75 @@
+﻿@model Task5.Models.Filters.ProductFilter
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Product Index</h2>
+
+<div>
+    @using (Ajax.BeginForm("Products", new AjaxOptions { UpdateTargetId = "productsTable" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <table class="table">
+            <tr>
+                <td>
+                    <div class="editor-label">
+                        @Html.LabelFor(model => model.Name)
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.Name)
+                    </div>
+                    <div class="editor-label">
+                        @Html.LabelFor(model => model.Price)
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.Price)
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="submit" value="Search" />
+                    <input type="button" id="clear" value="Reset" />
+                </td>
+                <td>
+                </td>
+            </tr>
+        </table>
+    }
+    <div id="productsTable">
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+<script>
+    $(document).ready(function () {
+        getProducts();
+    });
+
+    $("#clear").on("click", function () {
+        $('#Name').val('');
+        $('#Price').val('');
+        $('#Manager').val('');
+            getProducts();
+     });
+
+
+    function getProducts() {
+        jQuery.ajax(
+            {
+                url: "@Url.Action("Products", "Product")",
+                data: { page:@ViewBag.CurrentPage},
+                type: "GET",
+                success: function (data, textStatus, XHR) {
+                    jQuery("#productsTable").html(data);
+                },
+                dataType: "html"
+            }
+        );
+    }
+
+</script>

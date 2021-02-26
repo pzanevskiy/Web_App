@@ -1,0 +1,101 @@
+﻿@model Task5.Models.Filters.OrderFilter
+@{
+    ViewBag.Title = "Index";
+}
+
+<div>
+    @using (Ajax.BeginForm("Orders", new AjaxOptions { UpdateTargetId = "ordersTable" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <table class="table">
+            <tr>
+                <td>
+                    <div class="editor-label">
+                        @Html.LabelFor(model => model.Customer)
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.Customer)
+                    </div>
+                    <div class="editor-label">
+                        @Html.LabelFor(model => model.Product)
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.Product)
+                    </div>
+                    <div class="editor-field">
+                        @Html.LabelFor(model => model.Manager)
+                    </div>
+                    <div>
+                        @Html.EditorFor(model => model.Manager)
+                    </div>
+                    <div class="editor-label">
+                        @Html.LabelFor(model => model.Date)
+                    </div>
+                    <div class="editor-field">
+                        @Html.EditorFor(model => model.Date)
+                        @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="submit" value="Search" />
+                    <input type="button" id="clear" value="Reset" />
+                </td>
+                <td>
+                </td>
+            </tr>
+        </table>
+    }
+    <div id="ordersTable">
+    </div>
+    <section id="orderDetailsSection">
+        <div id="orderDetails"></div>
+    </section>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+<script>
+    $(document).ready(function () {
+        getOrders();
+    });
+
+    $("#clear").on("click", function () {
+        $('#Customer').val('');
+        $('#Product').val('');
+        $('#Manager').val('');
+        $('#Date').val('');
+            getOrders();
+     });
+
+
+    function getOrders() {
+        jQuery.ajax(
+            {
+                url: "@Url.Action("Orders", "Order")",
+                data: { page:@ViewBag.CurrentPage},
+                type: "GET",
+                success: function (data, textStatus, XHR) {
+                    jQuery("#ordersTable").html(data);
+                },
+                dataType: "html"
+            }
+        );
+    }
+
+    showOrderDetails = function () {
+        $("#orderDetails").show();
+    }
+
+    hideOrderDetails = function () {
+        $("#orderDetails").hide();
+        $("#orderDetails").html(null);
+    }
+
+</script>
+
+
