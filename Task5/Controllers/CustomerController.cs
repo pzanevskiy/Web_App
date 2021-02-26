@@ -31,7 +31,6 @@ namespace Task5.Controllers
             customerService = new CustomerService(uow);
             orderService = new OrderService(uow);
         }
-
         // GET: Customer
         public ActionResult Index(int? page)
         {

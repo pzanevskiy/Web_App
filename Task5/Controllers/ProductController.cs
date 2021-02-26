@@ -32,7 +32,6 @@ namespace Task5.Controllers
         {
             ViewBag.CurrentPage = page ?? 1;
             return View();
-            //ViewBag.Products = mapper.Map<);
         }
 
         public ActionResult Products(int? page)

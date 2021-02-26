@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataAnnotationsExtensions;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace Task5.Models.Filters
         public string Name { get; set; }
 
         [Display(Name = "Price")]
+        [Min(1)]
         public double? Price { get; set; }
     }
 }

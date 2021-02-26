@@ -13,8 +13,12 @@
         @Html.ActionLink("Create New", "Create", new { page = ViewBag.CurrentPage }, htmlAttributes: new { @class = "btn btn-success border border-dark rounded-pill" })
     </p>
 }
+
 @if (Model != null && Model.Count > 0)
 {
+    <h4>Customer's list</h4>
+    <hr />
+
     <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 ">
         @foreach (var item in Model)
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataAnnotationsExtensions;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -15,7 +16,8 @@ namespace Task5.Models.Order
         public DateTime Date { get; set; }
 
         [Required(ErrorMessage = "Enter value")]
-        [Display(Name = "Price")]
+        [Display(Name = "Price")]      
+        [Min(1)]        
         public double Price { get; set; }
 
         [Required(ErrorMessage = "Select value")]
