@@ -10,7 +10,7 @@
 @if (User.IsInRole("admin"))
 {
     <p>
-        @Html.ActionLink("Create New", "Create", new { page = ViewBag.CurrentPage }, htmlAttributes: new { @class = "btn btn-success border border-dark rounded-pill" })
+        @Html.ActionLink("Добавить", "Create", new { page = ViewBag.CurrentPage }, htmlAttributes: new { @class = "btn btn-success border border-dark rounded-pill" })
     </p>
 }
 

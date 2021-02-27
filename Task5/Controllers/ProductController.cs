@@ -3,7 +3,6 @@ using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Task5.BL.DTO;
 using Task5.BL.Service;
@@ -17,17 +16,17 @@ namespace Task5.Controllers
 {
     public class ProductController : Controller
     {
-        IUnitOfWork uow;
-        IMapper mapper;
-        ProductService productService;
+        private IUnitOfWork _uow;
+        private IMapper _mapper;
+        private ProductService _productService;
 
         public ProductController()
         {
-            uow = new EFUnitOfWork();
-            mapper = new Mapper(MapperWebConfig.Configure());
-            productService = new ProductService(uow);
+            _uow = new EFUnitOfWork();
+            _mapper = new Mapper(MapperWebConfig.Configure());
+            _productService = new ProductService(_uow);
         }
-        // GET: Product
+
         public ActionResult Index(int? page)
         {
             ViewBag.CurrentPage = page ?? 1;
@@ -38,7 +37,7 @@ namespace Task5.Controllers
         {
             try
             {
-                var orders = mapper.Map<IEnumerable<ProductDTO>, IEnumerable<ProductViewModel>>(productService.GetAll());
+                var orders = _mapper.Map<IEnumerable<ProductDTO>, IEnumerable<ProductViewModel>>(_productService.GetAll());
                 ViewBag.CurrentPage = page;
                 return PartialView("List", orders.ToPagedList(page ?? 1, 3));
             }
@@ -56,7 +55,7 @@ namespace Task5.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var products = mapper.Map<IEnumerable<ProductDTO>, IEnumerable<ProductViewModel>>(productService.GetAll());
+                    var products = _mapper.Map<IEnumerable<ProductDTO>, IEnumerable<ProductViewModel>>(_productService.GetAll());
                     if (model.Name != null)
                     {
                         products = products.Where(x => x.Name.ToLower().Contains(model.Name.ToLower()));
@@ -76,14 +75,12 @@ namespace Task5.Controllers
             }
         }
 
-        // GET: Product/Details/5
         [Authorize]
         public ActionResult Details(int id)
         {
-            return PartialView(mapper.Map<ProductDTO, ProductViewModel>(productService.FindById(id)));
+            return PartialView(_mapper.Map<ProductDTO, ProductViewModel>(_productService.FindById(id)));
         }
 
-        // GET: Product/Create
         [Authorize(Roles = "admin")]
         public ActionResult Create(int? page)
         {
@@ -92,7 +89,6 @@ namespace Task5.Controllers
             return View(model);
         }
 
-        // POST: Product/Create
         [HttpPost]
         [Authorize(Roles = "admin")]
         public ActionResult Create(ProductViewModel model, int? page)
@@ -101,7 +97,7 @@ namespace Task5.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    productService.Create(mapper.Map<ProductViewModel, ProductDTO>(model));
+                    _productService.Create(_mapper.Map<ProductViewModel, ProductDTO>(model));
                     return RedirectToAction("Index", new { page = page });
                 }
                 return View();
@@ -112,15 +108,13 @@ namespace Task5.Controllers
             }
         }
 
-        // GET: Product/Edit/5
         [Authorize(Roles = "admin")]
         public ActionResult Edit(int id,int?page)
         {
             ViewBag.CurrentPage = page;
-            return View(mapper.Map<ProductDTO, ProductViewModel>(productService.FindById(id)));
+            return View(_mapper.Map<ProductDTO, ProductViewModel>(_productService.FindById(id)));
         }
 
-        // POST: Product/Edit/5
         [HttpPost]
         [Authorize(Roles = "admin")]
         public ActionResult Edit(ProductViewModel model, int? page)
@@ -129,11 +123,10 @@ namespace Task5.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    productService.Update(mapper.Map<ProductViewModel, ProductDTO>(model));
+                    _productService.Update(_mapper.Map<ProductViewModel, ProductDTO>(model));
                     return RedirectToAction("Index", new { page = page });
                 }
                 return View();
-                // TODO: Add update logic here
             }
             catch
             {
@@ -141,22 +134,20 @@ namespace Task5.Controllers
             }
         }
 
-        // GET: Product/Delete/5
         [Authorize(Roles = "admin")]
         public ActionResult Delete(int id,int? page)
         {
             ViewBag.CurrentPage = page;
-            return View(mapper.Map<ProductDTO, ProductViewModel>(productService.FindById(id)));
+            return View(_mapper.Map<ProductDTO, ProductViewModel>(_productService.FindById(id)));
         }
 
-        // POST: Product/Delete/5
         [HttpPost]
         [Authorize(Roles = "admin")]
         public ActionResult Delete(int id, FormCollection collection, int? page)
         {
             try
             {
-                productService.Delete(id);
+                _productService.Delete(id);
                 return RedirectToAction("Index", new { page = page });
             }
             catch
@@ -167,10 +158,10 @@ namespace Task5.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && productService != null)
+            if (disposing && _productService != null)
             {
-                productService.Dispose();               
-                productService = null;
+                _productService.Dispose();               
+                _productService = null;
             }
             base.Dispose(disposing);
         }

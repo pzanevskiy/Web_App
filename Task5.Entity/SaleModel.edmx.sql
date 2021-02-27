@@ -2,7 +2,7 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 02/26/2021 01:22:15
+-- Date Created: 02/27/2021 11:36:42
 -- Generated from EDMX file: C:\Users\Павел\source\repos\Web_App\Task5.Entity\SaleModel.edmx
 -- --------------------------------------------------
 
@@ -17,11 +17,32 @@ GO
 -- Dropping existing FOREIGN KEY constraints
 -- --------------------------------------------------
 
+IF OBJECT_ID(N'[dbo].[FK_CustomerOrder]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Orders] DROP CONSTRAINT [FK_CustomerOrder];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ProductOrder]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Orders] DROP CONSTRAINT [FK_ProductOrder];
+GO
+IF OBJECT_ID(N'[dbo].[FK_ManagerOrder]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Orders] DROP CONSTRAINT [FK_ManagerOrder];
+GO
 
 -- --------------------------------------------------
 -- Dropping existing tables
 -- --------------------------------------------------
 
+IF OBJECT_ID(N'[dbo].[Customers]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Customers];
+GO
+IF OBJECT_ID(N'[dbo].[Products]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Products];
+GO
+IF OBJECT_ID(N'[dbo].[Orders]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Orders];
+GO
+IF OBJECT_ID(N'[dbo].[ManagerSet]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[ManagerSet];
+GO
 
 -- --------------------------------------------------
 -- Creating all tables
@@ -100,7 +121,7 @@ ADD CONSTRAINT [FK_CustomerOrder]
     FOREIGN KEY ([Customer_Id])
     REFERENCES [dbo].[Customers]
         ([Id])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
+    ON DELETE CASCADE ON UPDATE NO ACTION;
 GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_CustomerOrder'
@@ -115,7 +136,7 @@ ADD CONSTRAINT [FK_ProductOrder]
     FOREIGN KEY ([Product_Id])
     REFERENCES [dbo].[Products]
         ([Id])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
+    ON DELETE CASCADE ON UPDATE NO ACTION;
 GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_ProductOrder'
@@ -130,7 +151,7 @@ ADD CONSTRAINT [FK_ManagerOrder]
     FOREIGN KEY ([Manager_Id])
     REFERENCES [dbo].[ManagerSet]
         ([Id])
-    ON DELETE NO ACTION ON UPDATE NO ACTION;
+    ON DELETE CASCADE ON UPDATE NO ACTION;
 GO
 
 -- Creating non-clustered index for FOREIGN KEY 'FK_ManagerOrder'

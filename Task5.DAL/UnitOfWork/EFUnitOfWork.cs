@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Task5.DAL.Context;
 using Task5.DAL.Repositories;
 using Task5.DAL.Repositories.Interfaces;
@@ -11,26 +9,26 @@ namespace Task5.DAL.UnitOfWork
 {
     public class EFUnitOfWork : IUnitOfWork
     {
-        private SaleContext context;
-        private IGenericRepository<Customer> customerRepository;
-        private IGenericRepository<Order> orderRepository;
-        private IGenericRepository<Product> productRepository;
-        private IGenericRepository<Manager> managerRepository;
+        private SaleContext _context;
+        private IGenericRepository<Customer> _customerRepository;
+        private IGenericRepository<Order> _orderRepository;
+        private IGenericRepository<Product> _productRepository;
+        private IGenericRepository<Manager> _managerRepository;
 
         public EFUnitOfWork()
         {
-            context = new SaleContext();
+            _context = new SaleContext();
         }
 
         public IGenericRepository<Customer> Customers
         {
             get
             {
-                if (customerRepository == null)
+                if (_customerRepository == null)
                 {
-                    customerRepository = new GenericRepository<Customer>(context);
+                    _customerRepository = new GenericRepository<Customer>(_context);
                 }
-                return customerRepository;
+                return _customerRepository;
             }
         }
 
@@ -38,11 +36,11 @@ namespace Task5.DAL.UnitOfWork
         {
             get
             {
-                if (productRepository == null)
+                if (_productRepository == null)
                 {
-                    productRepository = new GenericRepository<Product>(context);
+                    _productRepository = new GenericRepository<Product>(_context);
                 }
-                return productRepository;
+                return _productRepository;
             }
         }
 
@@ -50,11 +48,11 @@ namespace Task5.DAL.UnitOfWork
         {
             get
             {
-                if (orderRepository == null)
+                if (_orderRepository == null)
                 {
-                    orderRepository = new GenericRepository<Order>(context);
+                    _orderRepository = new GenericRepository<Order>(_context);
                 }
-                return orderRepository;
+                return _orderRepository;
             }
         }
 
@@ -62,16 +60,16 @@ namespace Task5.DAL.UnitOfWork
         {
             get
             {
-                if (managerRepository == null)
+                if (_managerRepository == null)
                 {
-                    managerRepository = new GenericRepository<Manager>(context);
+                    _managerRepository = new GenericRepository<Manager>(_context);
                 }
-                return managerRepository;
+                return _managerRepository;
             }
         }
         public void Save()
         {
-            context.SaveChanges();
+            _context.SaveChanges();
         }
 
         private bool disposed = false;
@@ -82,7 +80,7 @@ namespace Task5.DAL.UnitOfWork
             {
                 if (disposing)
                 {
-                    context.Dispose();
+                    _context.Dispose();
                 }
                 this.disposed = true;
             }
@@ -94,5 +92,6 @@ namespace Task5.DAL.UnitOfWork
             GC.SuppressFinalize(this);
         }
 
+        ~EFUnitOfWork() => Dispose();
     }
 }

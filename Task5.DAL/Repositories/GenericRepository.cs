@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using Task5.DAL.Context;
 using Task5.DAL.Repositories.Interfaces;
 
@@ -11,30 +10,30 @@ namespace Task5.DAL.Repositories
 {
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
-        SaleContext context;
-        DbSet<TEntity> entitySet;
+        private SaleContext _context;
+        private DbSet<TEntity> _entitySet;
 
         public GenericRepository(SaleContext context)
         {
-            this.context = context;
-            entitySet = this.context.Set<TEntity>();
+            this._context = context;
+            _entitySet = this._context.Set<TEntity>();
         }
 
         public IEnumerable<TEntity> Get()
         {
-            return entitySet.ToList();
+            return _entitySet.ToList();
         }
 
         public TEntity Get(Expression<Func<TEntity, bool>> predicate)
         {
-            return entitySet.FirstOrDefault(predicate);
+            return _entitySet.FirstOrDefault(predicate);
         }
 
         public void Add(TEntity entity)
         {
             if (entity != null)
             {
-                entitySet.Add(entity);
+                _entitySet.Add(entity);
             }
         }
 
@@ -42,7 +41,7 @@ namespace Task5.DAL.Repositories
         {
             if (entity != null)
             {
-                entitySet.Remove(entity);
+                _entitySet.Remove(entity);
             }
         }
 
@@ -50,8 +49,8 @@ namespace Task5.DAL.Repositories
         {
             if (entity != null)
             {
-                context.Entry(entity).State = EntityState.Modified;
+                _context.Entry(entity).State = EntityState.Modified;
             }
-        }
+        }        
     }
 }

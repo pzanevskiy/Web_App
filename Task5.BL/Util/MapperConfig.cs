@@ -1,7 +1,4 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Task5.BL.DTO;
 using Task5.Entity;
 
@@ -15,12 +12,9 @@ namespace Task5.BL.Util
             (
                 cfg =>
                 {
-                    cfg.CreateMap<Product, ProductDTO>();
-                    cfg.CreateMap<ProductDTO, Product>();
-                    cfg.CreateMap<Customer, CustomerDTO>();
-                    cfg.CreateMap<CustomerDTO, Customer>();
-                    cfg.CreateMap<Manager, ManagerDTO>();
-                    cfg.CreateMap<ManagerDTO, Manager>();
+                    cfg.CreateMap<Product, ProductDTO>().ReverseMap();
+                    cfg.CreateMap<Customer, CustomerDTO>().ReverseMap();
+                    cfg.CreateMap<Manager, ManagerDTO>().ReverseMap();
                     cfg.CreateMap<Order, OrderDTO>()
                     .ForMember("Customer", opt => opt.MapFrom(x => x.Customer.Nickname))
                     .ForMember("Product", opt => opt.MapFrom(x => x.Product.Name))

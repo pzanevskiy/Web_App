@@ -1,8 +1,4 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using Task5.BL.DTO;
 using Task5.Models.Customer;
 using Task5.Models.Manager;
@@ -19,18 +15,15 @@ namespace Task5.Util
             (
                 cfg =>
                 {
-                    cfg.CreateMap<ProductDTO, ProductViewModel>();
-                    cfg.CreateMap<ProductViewModel, ProductDTO>();
-                    cfg.CreateMap<CustomerDTO, CustomerViewModel>();
-                    cfg.CreateMap<CustomerViewModel, CustomerDTO>();
-                    cfg.CreateMap<ManagerDTO, ManagerViewModel>();
-                    cfg.CreateMap<ManagerViewModel, ManagerDTO>();
+                    cfg.CreateMap<ProductDTO, ProductViewModel>().ReverseMap();
+                    cfg.CreateMap<CustomerDTO, CustomerViewModel>().ReverseMap();
+                    cfg.CreateMap<ManagerDTO, ManagerViewModel>().ReverseMap();
                     cfg.CreateMap<OrderDTO, OrderViewModel>()
                     .ForMember("Customer", opt => opt.MapFrom(x => x.Customer))
                     .ForMember("Product", opt => opt.MapFrom(x => x.Product))
                     .ForMember("Manager", opt => opt.MapFrom(x => x.Manager));
                     cfg.CreateMap<OrderViewModel, OrderDTO>();
-                    cfg.CreateMap<CreateOrderViewModel, OrderDTO>();
+                    cfg.CreateMap<CreateOrderViewModel, OrderDTO>().ReverseMap();
                 }
             );
             return config;

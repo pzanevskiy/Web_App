@@ -3,7 +3,6 @@ using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Task5.BL.DTO;
 using Task5.BL.Service;
@@ -19,19 +18,19 @@ namespace Task5.Controllers
 {
     public class CustomerController : Controller
     {
-        IUnitOfWork uow;
-        IMapper mapper;
-        ICustomerService customerService;
-        IOrderService orderService;
+        private IUnitOfWork _uow;
+        private IMapper _mapper;
+        private ICustomerService _customerService;
+        private IOrderService _orderService;
 
         public CustomerController()
         {
-            uow = new EFUnitOfWork();
-            mapper = new Mapper(MapperWebConfig.Configure());
-            customerService = new CustomerService(uow);
-            orderService = new OrderService(uow);
+            _uow = new EFUnitOfWork();
+            _mapper = new Mapper(MapperWebConfig.Configure());
+            _customerService = new CustomerService(_uow);
+            _orderService = new OrderService(_uow);
         }
-        // GET: Customer
+
         public ActionResult Index(int? page)
         {
             ViewBag.CurrentPage = page ?? 1;
@@ -42,7 +41,7 @@ namespace Task5.Controllers
         {
             try
             {
-                var customers = mapper.Map<IEnumerable<CustomerDTO>, IEnumerable<CustomerViewModel>>(customerService.GetAll());
+                var customers = _mapper.Map<IEnumerable<CustomerDTO>, IEnumerable<CustomerViewModel>>(_customerService.GetAll());
                 ViewBag.CurrentPage = page;
                 return PartialView("List", customers.ToPagedList(page ?? 1, 3));
             }
@@ -61,7 +60,7 @@ namespace Task5.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var customers = mapper.Map<IEnumerable<CustomerDTO>, IEnumerable<CustomerViewModel>>(customerService.GetAll());
+                    var customers = _mapper.Map<IEnumerable<CustomerDTO>, IEnumerable<CustomerViewModel>>(_customerService.GetAll());
                     if (model.NickName != null)
                     {
                         customers = customers.Where(x => x.Nickname.ToLower().Contains(model.NickName.ToLower()));
@@ -82,13 +81,11 @@ namespace Task5.Controllers
         }
 
 
-        // GET: Customer/Details/5
         public ActionResult Details(int id)
         {
-            return PartialView(mapper.Map<IEnumerable<OrderDTO>, IEnumerable<OrderViewModel>>(orderService.GetOrdersByCustomerId(id)));
+            return PartialView(_mapper.Map<IEnumerable<OrderDTO>, IEnumerable<OrderViewModel>>(_orderService.GetOrdersByCustomerId(id)));
         }
 
-        // GET: Customer/Create
         [Authorize(Roles = "admin")]
         public ActionResult Create(int? page)
         {
@@ -97,7 +94,6 @@ namespace Task5.Controllers
             return View(model);
         }
 
-        // POST: Customer/Create
         [HttpPost]
         [Authorize(Roles = "admin")]
         public ActionResult Create(CustomerViewModel model, int? page)
@@ -106,7 +102,7 @@ namespace Task5.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    customerService.Create(mapper.Map<CustomerViewModel, CustomerDTO>(model));
+                    _customerService.Create(_mapper.Map<CustomerViewModel, CustomerDTO>(model));
                     return RedirectToAction("Index", new { page = page });
                 }
                 return View();
@@ -117,15 +113,13 @@ namespace Task5.Controllers
             }
         }
 
-        // GET: Customer/Edit/5
         [Authorize(Roles = "admin")]
         public ActionResult Edit(int id, int? page)
         {
             ViewBag.CurrentPage = page;
-            return View(mapper.Map<CustomerDTO, CustomerViewModel>(customerService.FindById(id)));
+            return View(_mapper.Map<CustomerDTO, CustomerViewModel>(_customerService.FindById(id)));
         }
 
-        // POST: Customer/Edit/5
         [HttpPost]
         [Authorize(Roles = "admin")]
         public ActionResult Edit(CustomerViewModel model, int? page)
@@ -134,7 +128,7 @@ namespace Task5.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    customerService.Update(mapper.Map<CustomerViewModel, CustomerDTO>(model));
+                    _customerService.Update(_mapper.Map<CustomerViewModel, CustomerDTO>(model));
                     return RedirectToAction("Index", new { page = page });
                 }
                 return View();
@@ -145,22 +139,20 @@ namespace Task5.Controllers
             }
         }
 
-        // GET: Customer/Delete/5
         [Authorize(Roles = "admin")]
         public ActionResult Delete(int id, int? page)
         {
             ViewBag.CurrentPage = page;
-            return View(mapper.Map<CustomerDTO, CustomerViewModel>(customerService.FindById(id)));
+            return View(_mapper.Map<CustomerDTO, CustomerViewModel>(_customerService.FindById(id)));
         }
 
-        // POST: Customer/Delete/5
         [HttpPost]
         [Authorize(Roles = "admin")]
         public ActionResult Delete(int id, FormCollection formCollection, int? page)
         {
             try
             {
-                customerService.Delete(id);
+                _customerService.Delete(id);
                 return RedirectToAction("Index", new { page = page });
             }
             catch
@@ -171,12 +163,12 @@ namespace Task5.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && customerService != null)
+            if (disposing && _customerService != null)
             {
-                customerService.Dispose();
-                orderService.Dispose();
-                customerService = null;
-                orderService = null;                
+                _customerService.Dispose();
+                _orderService.Dispose();
+                _customerService = null;
+                _orderService = null;                
             }
             base.Dispose(disposing);
         }

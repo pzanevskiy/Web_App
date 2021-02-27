@@ -59,7 +59,9 @@
     <Property Name="Rating" Type="float" Nullable="false" />
   </EntityType>
   <Association Name="CustomerOrder">
-    <End Role="Customer" Type="SaleModel.Store.Customers" Multiplicity="1" />
+    <End Role="Customer" Type="SaleModel.Store.Customers" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
     <End Role="Order" Type="SaleModel.Store.Orders" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Customer">
@@ -71,7 +73,9 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="ProductOrder">
-    <End Role="Product" Type="SaleModel.Store.Products" Multiplicity="1" />
+    <End Role="Product" Type="SaleModel.Store.Products" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
     <End Role="Order" Type="SaleModel.Store.Orders" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Product">
@@ -83,7 +87,9 @@
     </ReferentialConstraint>
   </Association>
   <Association Name="ManagerOrder">
-    <End Role="Manager" Type="SaleModel.Store.ManagerSet" Multiplicity="1" />
+    <End Role="Manager" Type="SaleModel.Store.ManagerSet" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
     <End Role="Order" Type="SaleModel.Store.Orders" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Manager">
@@ -155,15 +161,21 @@
           <NavigationProperty Name="Order" Relationship="SaleModel.ManagerOrder" FromRole="Manager" ToRole="Order" />
         </EntityType>
         <Association Name="CustomerOrder">
-          <End Type="SaleModel.Customer" Role="Customer" Multiplicity="1" />
+          <End Type="SaleModel.Customer" Role="Customer" Multiplicity="1" >
+            <OnDelete Action="Cascade" />
+          </End>
           <End Type="SaleModel.Order" Role="Order" Multiplicity="*" />
         </Association>
         <Association Name="ProductOrder">
-          <End Type="SaleModel.Product" Role="Product" Multiplicity="1" />
+          <End Type="SaleModel.Product" Role="Product" Multiplicity="1" >
+            <OnDelete Action="Cascade" />
+          </End>
           <End Type="SaleModel.Order" Role="Order" Multiplicity="*" />
         </Association>
         <Association Name="ManagerOrder">
-          <End Type="SaleModel.Manager" Role="Manager" Multiplicity="1" />
+          <End Type="SaleModel.Manager" Role="Manager" Multiplicity="1" >
+            <OnDelete Action="Cascade" />
+          </End>
           <End Type="SaleModel.Order" Role="Order" Multiplicity="*" />
         </Association>
       </Schema>

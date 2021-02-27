@@ -3,7 +3,6 @@ using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Task5.BL.DTO;
 using Task5.BL.Service;
@@ -21,24 +20,23 @@ namespace Task5.Controllers
 {
     public class OrderController : Controller
     {
-        IUnitOfWork uow;
-        IMapper mapper;
-        IOrderService orderService;
-        ICustomerService customerService;
-        IManagerService managerService;
-        IProductService productService;
+        private IUnitOfWork _uow;
+        private IMapper _mapper;
+        private IOrderService _orderService;
+        private ICustomerService _customerService;
+        private IManagerService _managerService;
+        private IProductService _productService;
 
         public OrderController()
         {
-            uow = new EFUnitOfWork();
-            mapper = new Mapper(MapperWebConfig.Configure());
-            orderService = new OrderService(uow);
-            customerService = new CustomerService(uow);
-            managerService = new ManagerService(uow);
-            productService = new ProductService(uow);
+            _uow = new EFUnitOfWork();
+            _mapper = new Mapper(MapperWebConfig.Configure());
+            _orderService = new OrderService(_uow);
+            _customerService = new CustomerService(_uow);
+            _managerService = new ManagerService(_uow);
+            _productService = new ProductService(_uow);
         }
 
-        // GET: Order
         public ActionResult Index(int? page)
         {
             ViewBag.CurrentPage = page ?? 1;
@@ -49,7 +47,7 @@ namespace Task5.Controllers
         {
             try
             {
-                var orders = mapper.Map<IEnumerable<OrderDTO>, IEnumerable<OrderViewModel>>(orderService.GetAll());
+                var orders = _mapper.Map<IEnumerable<OrderDTO>, IEnumerable<OrderViewModel>>(_orderService.GetAll());
                 ViewBag.CurrentPage = page;
                 return PartialView("List", orders.ToPagedList(page ?? 1, 3));
             }
@@ -68,7 +66,7 @@ namespace Task5.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var sales = mapper.Map<IEnumerable<OrderDTO>, IEnumerable<OrderViewModel>>(orderService.GetAll());
+                    var sales = _mapper.Map<IEnumerable<OrderDTO>, IEnumerable<OrderViewModel>>(_orderService.GetAll());
                     if (model.Date != null)
                     {
                         sales = sales.Where(x => (x.Date.Equals(model.Date)));
@@ -95,43 +93,41 @@ namespace Task5.Controllers
                 return View("Error");
             }
         }
-        // GET: Order/Details/5
+
         [Authorize]
         public ActionResult Details(int id)
         {
-            return PartialView(mapper.Map<OrderDTO, OrderViewModel>(orderService.FindById(id)));
+            return PartialView(_mapper.Map<OrderDTO, OrderViewModel>(_orderService.FindById(id)));
         }
 
-        // GET: Order/Create
         [Authorize(Roles = "admin")]
         public ActionResult Create(int? page)
         {
             var model = new CreateOrderViewModel()
             {
-                Customers = new SelectList(mapper.Map<IEnumerable<CustomerDTO>, IEnumerable<CustomerViewModel>>(customerService.GetAll()), "Nickname", "Nickname"),
-                Products = new SelectList(mapper.Map<IEnumerable<ProductDTO>, IEnumerable<ProductViewModel>>(productService.GetAll()), "Name", "Name"),
-                Managers = new SelectList(mapper.Map<IEnumerable<ManagerDTO>, IEnumerable<ManagerViewModel>>(managerService.GetAll()), "LastName", "LastName")
+                Customers = new SelectList(_mapper.Map<IEnumerable<CustomerDTO>, IEnumerable<CustomerViewModel>>(_customerService.GetAll()), "Nickname", "Nickname"),
+                Products = new SelectList(_mapper.Map<IEnumerable<ProductDTO>, IEnumerable<ProductViewModel>>(_productService.GetAll()), "Name", "Name"),
+                Managers = new SelectList(_mapper.Map<IEnumerable<ManagerDTO>, IEnumerable<ManagerViewModel>>(_managerService.GetAll()), "LastName", "LastName")
             };
             ViewBag.CurrentPage = page;
             return View(model);
         }
 
-        // POST: Order/Create
         [HttpPost]
         public ActionResult Create(CreateOrderViewModel model, int? page)
         {
 
             if (!ModelState.IsValid)
             {
-                model.Customers = new SelectList(mapper.Map<IEnumerable<CustomerDTO>, IEnumerable<CustomerViewModel>>(customerService.GetAll()), "Nickname", "Nickname");
-                model.Products = new SelectList(mapper.Map<IEnumerable<ProductDTO>, IEnumerable<ProductViewModel>>(productService.GetAll()), "Name", "Name");
-                model.Managers = new SelectList(mapper.Map<IEnumerable<ManagerDTO>, IEnumerable<ManagerViewModel>>(managerService.GetAll()), "LastName", "LastName");
+                model.Customers = new SelectList(_mapper.Map<IEnumerable<CustomerDTO>, IEnumerable<CustomerViewModel>>(_customerService.GetAll()), "Nickname", "Nickname");
+                model.Products = new SelectList(_mapper.Map<IEnumerable<ProductDTO>, IEnumerable<ProductViewModel>>(_productService.GetAll()), "Name", "Name");
+                model.Managers = new SelectList(_mapper.Map<IEnumerable<ManagerDTO>, IEnumerable<ManagerViewModel>>(_managerService.GetAll()), "LastName", "LastName");
 
                 return View(model);
             }
             try
             {
-                orderService.AddOrder(mapper.Map<CreateOrderViewModel, OrderDTO>(model));
+                _orderService.AddOrder(_mapper.Map<CreateOrderViewModel, OrderDTO>(model));
                 return RedirectToAction("Index", new { page = page });
             }
             catch
@@ -140,15 +136,13 @@ namespace Task5.Controllers
             }
         }
 
-        // GET: Order/Edit/5
         [Authorize(Roles = "admin")]
         public ActionResult Edit(int id, int? page)
         {
             ViewBag.CurrentPage = page;
-            return View(mapper.Map<OrderDTO, OrderViewModel>(orderService.FindById(id)));
+            return View(_mapper.Map<OrderDTO, OrderViewModel>(_orderService.FindById(id)));
         }
 
-        // POST: Order/Edit/5
         [HttpPost]
         public ActionResult Edit(OrderViewModel model, int? page)
         {
@@ -156,7 +150,7 @@ namespace Task5.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    orderService.Update(mapper.Map<OrderViewModel, OrderDTO>(model));
+                    _orderService.Update(_mapper.Map<OrderViewModel, OrderDTO>(model));
                     return RedirectToAction("Index", new { page = page });
                 }return View();
             }
@@ -166,21 +160,19 @@ namespace Task5.Controllers
             }
         }
 
-        // GET: Order/Delete/5
         [Authorize(Roles = "admin")]
         public ActionResult Delete(int id, int? page)
         {
             ViewBag.CurrentPage = page;
-            return View(mapper.Map<OrderDTO, OrderViewModel>(orderService.FindById(id)));
+            return View(_mapper.Map<OrderDTO, OrderViewModel>(_orderService.FindById(id)));
         }
 
-        // POST: Order/Delete/5
         [HttpPost]
         public ActionResult Delete(int id, FormCollection collection, int? page)
         {
             try
             {
-                orderService.Delete(id);
+                _orderService.Delete(id);
                 return RedirectToAction("Index", new { page = page });
             }
             catch
@@ -191,16 +183,16 @@ namespace Task5.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && orderService != null)
+            if (disposing && _orderService != null)
             {
-                managerService.Dispose();
-                orderService.Dispose();
-                customerService.Dispose();
-                productService.Dispose();
-                managerService = null;
-                orderService = null;
-                customerService = null;
-                productService = null;
+                _managerService.Dispose();
+                _orderService.Dispose();
+                _customerService.Dispose();
+                _productService.Dispose();
+                _managerService = null;
+                _orderService = null;
+                _customerService = null;
+                _productService = null;
             }
             base.Dispose(disposing);
         }

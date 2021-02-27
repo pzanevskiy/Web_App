@@ -3,7 +3,6 @@ using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Task5.BL.DTO;
 using Task5.BL.Service;
@@ -19,20 +18,19 @@ namespace Task5.Controllers
 {
     public class ManagerController : Controller
     {
-        IUnitOfWork uow;
-        IMapper mapper;
-        IManagerService managerService;
-        IOrderService orderService;
+        private IUnitOfWork _uow;
+        private IMapper _mapper;
+        private IManagerService _managerService;
+        private IOrderService _orderService;
 
         public ManagerController()
         {
-            uow = new EFUnitOfWork();
-            mapper = new Mapper(MapperWebConfig.Configure());
-            managerService = new ManagerService(uow);
-            orderService = new OrderService(uow);
+            _uow = new EFUnitOfWork();
+            _mapper = new Mapper(MapperWebConfig.Configure());
+            _managerService = new ManagerService(_uow);
+            _orderService = new OrderService(_uow);
         }
 
-        // GET: Manager
         public ActionResult Index(int? page)
         {
             ViewBag.CurrentPage = page ?? 1;
@@ -43,7 +41,7 @@ namespace Task5.Controllers
         {
             try
             {
-                var managers = mapper.Map<IEnumerable<ManagerDTO>, IEnumerable<ManagerViewModel>>(managerService.GetAll());
+                var managers = _mapper.Map<IEnumerable<ManagerDTO>, IEnumerable<ManagerViewModel>>(_managerService.GetAll());
                 ViewBag.CurrentPage = page;
                 return PartialView("List", managers.ToPagedList(page ?? 1, 3));
             }
@@ -62,7 +60,7 @@ namespace Task5.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var managers = mapper.Map<IEnumerable<ManagerDTO>, IEnumerable<ManagerViewModel>>(managerService.GetAll());
+                    var managers = _mapper.Map<IEnumerable<ManagerDTO>, IEnumerable<ManagerViewModel>>(_managerService.GetAll());
                     if (model.LastName != null)
                     {
                         managers = managers.Where(x => x.LastName.ToLower().Contains(model.LastName.ToLower()));
@@ -85,18 +83,16 @@ namespace Task5.Controllers
         [HttpGet]
         public JsonResult GetChartData()
         {
-            var item =managerService.GetManagersWithOrdersCount();
+            var item =_managerService.GetManagersWithOrdersCount();
 
             return Json(item, JsonRequestBehavior.AllowGet);
         }
-        // GET: Manager/Details/5
         [Authorize]
         public ActionResult Details(int id)
         {
-            return PartialView(mapper.Map<IEnumerable<OrderDTO>, IEnumerable<OrderViewModel>>(orderService.GetOrdersByManagerId(id)));
+            return PartialView(_mapper.Map<IEnumerable<OrderDTO>, IEnumerable<OrderViewModel>>(_orderService.GetOrdersByManagerId(id)));
         }
 
-        // GET: Manager/Create
         [Authorize(Roles = "admin")]
         public ActionResult Create(int? page)
         {
@@ -105,7 +101,6 @@ namespace Task5.Controllers
             return View(model);
         }
 
-        // POST: Manager/Create
         [HttpPost]
         [Authorize(Roles = "admin")]
         public ActionResult Create(ManagerViewModel model, int? page)
@@ -114,11 +109,10 @@ namespace Task5.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    managerService.Create(mapper.Map<ManagerViewModel, ManagerDTO>(model));
+                    _managerService.Create(_mapper.Map<ManagerViewModel, ManagerDTO>(model));
                     return RedirectToAction("Index", new { page = page });
                 }
                 return View();
-                // TODO: Add insert logic here
             }
             catch
             {
@@ -126,15 +120,13 @@ namespace Task5.Controllers
             }
         }
 
-        // GET: Manager/Edit/5
         [Authorize(Roles = "admin")]
         public ActionResult Edit(int id, int? page)
         {
             ViewBag.CurrentPage = page;
-            return View(mapper.Map<ManagerDTO, ManagerViewModel>(managerService.FindById(id)));
+            return View(_mapper.Map<ManagerDTO, ManagerViewModel>(_managerService.FindById(id)));
         }
 
-        // POST: Manager/Edit/5
         [HttpPost]
         [Authorize(Roles = "admin")]
         public ActionResult Edit(ManagerViewModel model, int? page)
@@ -143,7 +135,7 @@ namespace Task5.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    managerService.Update(mapper.Map<ManagerViewModel, ManagerDTO>(model));
+                    _managerService.Update(_mapper.Map<ManagerViewModel, ManagerDTO>(model));
                     return RedirectToAction("Index", new { page = page });
                 }
                 return View();
@@ -154,22 +146,20 @@ namespace Task5.Controllers
             }
         }
 
-        // GET: Manager/Delete/5
         [Authorize(Roles = "admin")]
         public ActionResult Delete(int id, int? page)
         {
             ViewBag.CurrentPage = page;
-            return View(mapper.Map<ManagerDTO, ManagerViewModel>(managerService.FindById(id)));
+            return View(_mapper.Map<ManagerDTO, ManagerViewModel>(_managerService.FindById(id)));
         }
 
-        // POST: Manager/Delete/5
         [HttpPost]
         [Authorize(Roles = "admin")]
         public ActionResult Delete(int id, FormCollection formCollection, int? page)
         {
             try
             {
-                managerService.Delete(id);
+                _managerService.Delete(id);
                 return RedirectToAction("Index", new { page = page });
             }
             catch
@@ -180,12 +170,12 @@ namespace Task5.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && managerService != null)
+            if (disposing && _managerService != null)
             {
-                managerService.Dispose();
-                orderService.Dispose();
-                managerService = null;
-                orderService = null;
+                _managerService.Dispose();
+                _orderService.Dispose();
+                _managerService = null;
+                _orderService = null;
             }
             base.Dispose(disposing);
         }
