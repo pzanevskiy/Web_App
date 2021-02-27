@@ -26,32 +26,26 @@
                 <li class="active">
                     @Html.ActionLink("Домашняя страница", "Index", "Home", new { area = "" }, new { @class = "nav-item nav-link" })
                 </li>
-                <li class="active">
-                    @Html.ActionLink("Информация", "About", "Home", new { area = "" }, new { @class = "nav-item nav-link" })
-                </li>
-                <li class="active">
-                    @Html.ActionLink("Связаться", "Contact", "Home", new { area = "" }, new { @class = "nav-item nav-link" })
-                </li>
                 @if (User.Identity.IsAuthenticated)
                 {
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-white" id="navbarDropdown" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Menu
+                            Меню
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <ul>
                                 <li>
-                                    @Html.ActionLink("Customers", "Index", "Customer")
+                                    @Html.ActionLink("Покупатели", "Index", "Customer")
                                 </li>
                                 <li>
-                                    @Html.ActionLink("Products", "Index", "Product")
+                                    @Html.ActionLink("Товары", "Index", "Product")
                                 </li>
                                 <li>
-                                    @Html.ActionLink("Orders", "Index", "Order")
+                                    @Html.ActionLink("Заказы", "Index", "Order")
                                 </li>
                                 <li> 
-                                    @Html.ActionLink("Managers", "Index", "Manager")
+                                    @Html.ActionLink("Менеджеры", "Index", "Manager")
                                 </li>
                             </ul>
                         </div>

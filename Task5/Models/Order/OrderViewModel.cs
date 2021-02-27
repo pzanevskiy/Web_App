@@ -11,19 +11,24 @@ namespace Task5.Models.Order
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Enter value")]
+        [Required(ErrorMessage = "Введите значение")]
         [DataType(DataType.Date)]
+        [Display(Name = "Дата")]
         public DateTime Date { get; set; }
 
-        [Required(ErrorMessage = "Enter value")]
-        [Min(1)]
+        [Required(ErrorMessage = "Введите значение")]
+        [Min(1, ErrorMessage = "Значение не должно быть меньше 1")]
+        [Display(Name = "Цена")]
         public double Price { get; set; }
 
-        [Required(ErrorMessage = "Enter value")]
+        [Required(ErrorMessage = "Введите значение")]
+        [Display(Name = "Покупатель")]
         public string Customer { get; set; }
-        [Required(ErrorMessage = "Enter value")]
+        [Required(ErrorMessage = "Введите значение")]
+        [Display(Name = "Продукт")]
         public string Product { get; set; }
-        [Required(ErrorMessage = "Enter value")]
+        [Required(ErrorMessage = "Введите значение")]
+        [Display(Name = "Менеджер")]
         public string Manager { get; set; }
     }
 }

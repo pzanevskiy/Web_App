@@ -4,15 +4,13 @@
     ViewBag.Title = "Edit";
 }
 
-<h2>Edit</h2>
+<h4>Редактирование менеджера</h4>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
-        <h4>Edit manager</h4>
-        <hr />
 
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Id)
@@ -35,8 +33,8 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-success border border-dark rounded-pill" />
-                @Html.ActionLink("Back to list", "Index", new { page = ViewBag.CurrentPage }, htmlAttributes: new { @class = "btn btn-primary border border-dark rounded-pill" })
+                <input type="submit" value="Сохранить" class="btn btn-success border border-dark rounded-pill" />
+                @Html.ActionLink("Вернуться к списку", "Index", new { page = ViewBag.CurrentPage }, htmlAttributes: new { @class = "btn btn-primary border border-dark rounded-pill" })
             </div>
         </div>
     </div>

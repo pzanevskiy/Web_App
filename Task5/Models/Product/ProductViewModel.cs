@@ -10,10 +10,12 @@ namespace Task5.Models.Product
     public class ProductViewModel
     {
         public int Id { get; set; }
-        [Required(ErrorMessage = "Enter value")]
+        [Required(ErrorMessage = "Введите значение")]
+        [Display(Name = "Имя")]
         public string Name { get; set; }
-        [Required(ErrorMessage = "Enter value")]
-        [Min(1)]
+        [Required(ErrorMessage = "Введите значение")]
+        [Min(1,ErrorMessage ="Значение не должно быть меньше 1")]
+        [Display(Name = "Цена")]
         public double? Price { get; set; }
     }
 }

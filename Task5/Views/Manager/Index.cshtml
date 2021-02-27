@@ -2,6 +2,8 @@
 @{
     ViewBag.Title = "Index";
 }
+<h4>Фильтр менеджеров</h4>
+<hr />
 
 <div>
     @using (Ajax.BeginForm("Managers", new AjaxOptions { UpdateTargetId = "managersTable" }))
@@ -29,11 +31,11 @@
             </div>
             <div class="row py-3">
                 <div class="col-10">
-                    <input type="submit" value="Search" class="btn btn-success border border-dark rounded-pill" />
-                    <input type="button" id="clear" value="Reset" class="btn btn-secondary border border-dark rounded-pill" />
+                    <input type="submit" value="Поиск" class="btn btn-success border border-dark rounded-pill" />
+                    <input type="button" id="clear" value="Сбросить" class="btn btn-secondary border border-dark rounded-pill" />
                 </div>
             </div>
-        </div>        
+        </div>
     }
     <div id="managersTable">
     </div>

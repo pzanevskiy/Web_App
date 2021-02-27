@@ -16,7 +16,7 @@
 
 @if (Model != null && Model.Count > 0)
 {
-    <h4>Customer's list</h4>
+    <h4>Список покупателей</h4>
     <hr />
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 ">
@@ -25,19 +25,19 @@
             <div class="col p-2">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Customer #@item.Id</h4>
+                        <h4 class="card-title">Покупатель #@item.Id</h4>
                     </div>
                     <div class="card-body">
-                        <p>Name:<span> @item.Nickname</span></p>
-                        <p>Phone number:<span> @item.PhoneNumber</span></p>
+                        <p>Имя:<span> @item.Nickname</span></p>
+                        <p>Номер телефона:<span> @item.PhoneNumber</span></p>
                     </div>
                     <div class="card-footer">
                         <div class="row row-cols-1">
-                            <button type="button" class="btn btn-primary border border-dark rounded-pill m-1" onclick="onCustomerDetails(@item.Id)">Details</button>
+                            <button type="button" class="btn btn-primary border border-dark rounded-pill m-1" onclick="onCustomerDetails(@item.Id)">Подробности</button>
                             @if (User.IsInRole("admin"))
                             {
-                                @Html.ActionLink("Edit", "Edit", new { id = item.Id, page = ViewBag.CurrentPage }, htmlAttributes: new { @class = "btn btn-warning border border-dark rounded-pill m-1" })
-                                @Html.ActionLink("Delete", "Delete", new { id = item.Id, page = ViewBag.CurrentPage }, htmlAttributes: new { @class = "btn btn-danger border border-dark rounded-pill m-1" })
+                                @Html.ActionLink("Редактировать", "Edit", new { id = item.Id, page = ViewBag.CurrentPage }, htmlAttributes: new { @class = "btn btn-warning border border-dark rounded-pill m-1" })
+                                @Html.ActionLink("Удалить", "Delete", new { id = item.Id, page = ViewBag.CurrentPage }, htmlAttributes: new { @class = "btn btn-danger border border-dark rounded-pill m-1" })
                             }
                         </div>
                     </div>
@@ -50,7 +50,7 @@
 }
 else
 {
-    <div>No records</div>
+    <div>Нет записей</div>
 }
 
 @section Scripts {

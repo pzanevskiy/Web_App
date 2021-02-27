@@ -8,17 +8,17 @@ namespace Task5.Models.Filters
 {
     public class OrderFilter
     {
-        [Display(Name = "Date")]
+        [Display(Name = "Дата")]
         [DataType(DataType.Date)]
         public DateTime? Date { get; set; }
 
-        [Display(Name = "Customer")]
+        [Display(Name = "Покупатель")]
         public string Customer { get; set; }
 
-        [Display(Name = "Product")]
+        [Display(Name = "Продукт")]
         public string Product { get; set; }
 
-        [Display(Name = "Manager")]
+        [Display(Name = "Менеджер")]
         public string Manager { get; set; }
     }
 }

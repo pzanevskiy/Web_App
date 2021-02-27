@@ -10,12 +10,12 @@
 @if (User.IsInRole("admin"))
 {
     <p>
-        @Html.ActionLink("Create New", "Create", new { page = ViewBag.CurrentPage }, htmlAttributes: new { @class = "btn btn-success border border-dark rounded-pill" })
+        @Html.ActionLink("Добавить", "Create", new { page = ViewBag.CurrentPage }, htmlAttributes: new { @class = "btn btn-success border border-dark rounded-pill" })
     </p>
 }
 @if (Model != null && Model.Count > 0)
 {
-    <h4>Manager's list</h4>
+    <h4>Список менеджеров</h4>
     <hr />
     <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 ">
         @foreach (var item in Model)
@@ -23,19 +23,19 @@
             <div class="col p-2">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Manager #@item.Id</h4>
+                        <h4 class="card-title">Менеджер #@item.Id</h4>
                     </div>
                     <div class="card-body">
-                        <p>Lastname:<span> @item.LastName</span></p>
-                        <p>Rating:<span> @item.Rating</span></p>
+                        <p>Фамилия:<span> @item.LastName</span></p>
+                        <p>Рейтинг:<span> @item.Rating</span></p>
                     </div>
                     <div class="card-footer">
                         <div class="row row-cols-1">
-                            <button type="button" class="btn btn-primary border border-dark rounded-pill m-1" onclick="onManagerDetails(@item.Id)">Details</button>
+                            <button type="button" class="btn btn-primary border border-dark rounded-pill m-1" onclick="onManagerDetails(@item.Id)">Подробности</button>
                             @if (User.IsInRole("admin"))
                             {
-                                @Html.ActionLink("Edit", "Edit", new { id = item.Id, page = ViewBag.CurrentPage }, htmlAttributes: new { @class = "btn btn-warning border border-dark rounded-pill m-1" })
-                                @Html.ActionLink("Delete", "Delete", new { id = item.Id, page = ViewBag.CurrentPage }, htmlAttributes: new { @class = "btn btn-danger border border-dark rounded-pill m-1" })
+                                @Html.ActionLink("Редактировать", "Edit", new { id = item.Id, page = ViewBag.CurrentPage }, htmlAttributes: new { @class = "btn btn-warning border border-dark rounded-pill m-1" })
+                                @Html.ActionLink("Удалить", "Delete", new { id = item.Id, page = ViewBag.CurrentPage }, htmlAttributes: new { @class = "btn btn-danger border border-dark rounded-pill m-1" })
                             }
                         </div>
                     </div>
@@ -48,7 +48,7 @@
 }
 else
 {
-    <div>No records</div>
+    <div>Нет записей</div>
 }
 
 @section Scripts {

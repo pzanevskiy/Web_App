@@ -9,11 +9,11 @@ namespace Task5.Models.Filters
 {
     public class ProductFilter
     {
-        [Display(Name = "Name")]
+        [Display(Name = "Имя")]
         public string Name { get; set; }
 
-        [Display(Name = "Price")]
-        [Min(1)]
+        [Display(Name = "Цена")]
+        [Min(1, ErrorMessage = "Значение не должно быть меньше 1")]
         public double? Price { get; set; }
     }
 }

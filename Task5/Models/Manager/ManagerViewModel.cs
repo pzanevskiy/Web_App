@@ -10,14 +10,15 @@ namespace Task5.Models.Manager
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Enter value")]
-        [Display(Name = "Last name")]
+        [Required(ErrorMessage = "Введите значение")]
+        [Display(Name = "Фамилия")]
         [RegularExpression(@"^[A-Za-z]{2,50}")]
-        [StringLength(50, MinimumLength = 2, ErrorMessage = "String length must be between 2 and 50")]
+        [StringLength(50, MinimumLength = 2, ErrorMessage = "Строка должна быть от 2 до 50 символов")]
         public string LastName { get; set; }
 
-        [Required(ErrorMessage = "Enter value")]
-        [Display(Name = "Rating")]
+        [Required(ErrorMessage = "Введите значение")]
+        [Display(Name = "Рейтинг")]
+        [Range(0,10,ErrorMessage ="Рейтинг должен быть в диапозоне от 0 о 10")]
         public double Rating { get; set; }
     }
 }

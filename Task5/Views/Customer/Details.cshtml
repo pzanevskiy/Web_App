@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<Task5.Models.Order.OrderViewModel>
 
-<h4>Customer details</h4>
+<h4>Заказы покупателя</h4>
 <hr />
 
 @if (Model != null && Model.Count() > 0)
@@ -41,10 +41,10 @@
 }
 else
 {
-    <p>No records</p>
+    <p>Нет записей</p>
 }
 <p>
-    <button class="btn btn-primary border border-dark rounded-pill" id="hideButton">Hide</button>
+    <button class="btn btn-primary border border-dark rounded-pill" id="hideButton">Спрятать</button>
 </p>
 <script type="text/javascript">
     $("#hideButton").click(hideCustomerDetails);
