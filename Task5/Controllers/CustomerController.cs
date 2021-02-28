@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Ninject.Extensions.Logging;
 using PagedList;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,16 +18,18 @@ namespace Task5.Controllers
         private IMapper _mapper;
         private ICustomerService _customerService;
         private IOrderService _orderService;
-
-        public CustomerController(ICustomerService customerSerivice, IOrderService orderService)
+        private ILogger _logger;
+        public CustomerController(ICustomerService customerSerivice, IOrderService orderService,ILogger logger)
         {
             _mapper = new Mapper(MapperWebConfig.Configure());
             _customerService = customerSerivice;
             _orderService = orderService;
+            _logger = logger;
         }
 
         public ActionResult Index(int? page)
         {
+            _logger.Info($"{User.Identity.Name} Hello customer index");
             ViewBag.CurrentPage = page ?? 1;
             return View();
         }
@@ -41,6 +44,7 @@ namespace Task5.Controllers
             }
             catch
             {
+                _logger.Warn($"{User.Identity.Name} Customers error");
                 return View("Error");
             }
 
@@ -63,13 +67,16 @@ namespace Task5.Controllers
                     {
                         customers = customers.Where(x => x.PhoneNumber.ToLower().Contains(model.PhoneNumber.ToLower()));
                     }
+                    _logger.Info($"{User.Identity.Name} Filter customers:\t Nickname: {model.NickName}, Phone: {model.PhoneNumber}");
                     return PartialView("List", customers.ToPagedList(1, customers.Count() == 0 ? 1 : customers.Count()));
 
                 }
+                _logger.Warn($"{User.Identity.Name} Customers filter error");
                 return View();
             }
             catch
             {
+                _logger.Warn($"{User.Identity.Name} Customers filter error");
                 return View("Error");
             }
         }
@@ -77,6 +84,7 @@ namespace Task5.Controllers
 
         public ActionResult Details(int id)
         {
+            _logger.Info($"{User.Identity.Name} Details customer");
             return PartialView(_mapper.Map<IEnumerable<OrderDTO>, IEnumerable<OrderViewModel>>(_orderService.GetOrdersByCustomerId(id)));
         }
 
@@ -96,13 +104,16 @@ namespace Task5.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    _logger.Info($"{User.Identity.Name} create customer");
                     _customerService.Create(_mapper.Map<CustomerViewModel, CustomerDTO>(model));
                     return RedirectToAction("Index", new { page = page });
                 }
+                _logger.Warn($"{User.Identity.Name} Customers create error");
                 return View();
             }
             catch
             {
+                _logger.Warn($"{User.Identity.Name} Customers create error");
                 return View();
             }
         }
@@ -122,13 +133,16 @@ namespace Task5.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    _logger.Info($"{User.Identity.Name} edit customer");
                     _customerService.Update(_mapper.Map<CustomerViewModel, CustomerDTO>(model));
                     return RedirectToAction("Index", new { page = page });
                 }
+                _logger.Warn($"{User.Identity.Name} Customers edit error");
                 return View();
             }
             catch
             {
+                _logger.Warn($"{User.Identity.Name} Customers edit error");
                 return View();
             }
         }
@@ -146,25 +160,15 @@ namespace Task5.Controllers
         {
             try
             {
+                _logger.Info($"{User.Identity.Name} delete customer");
                 _customerService.Delete(id);
                 return RedirectToAction("Index", new { page = page });
             }
             catch
             {
+                _logger.Warn($"{User.Identity.Name} Customers delete error");
                 return View();
             }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && _customerService != null)
-            {
-                _customerService.Dispose();
-                _orderService.Dispose();
-                _customerService = null;
-                _orderService = null;                
-            }
-            base.Dispose(disposing);
         }
     }
 }

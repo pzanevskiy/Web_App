@@ -8,6 +8,7 @@ using Task5.BL.Util;
 using Task5.Util;
 using Ninject;
 using Ninject.Web.Mvc;
+using Task5.Utils;
 
 namespace Task5
 {
@@ -25,6 +26,7 @@ namespace Task5
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            LogConfigWeb.GetLogger();            
         }
     }
 }

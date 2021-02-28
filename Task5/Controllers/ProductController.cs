@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Ninject.Extensions.Logging;
 using PagedList;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,15 +16,18 @@ namespace Task5.Controllers
     {
         private IMapper _mapper;
         private IProductService _productService;
+        private ILogger _logger;
 
-        public ProductController(IProductService productService)
+        public ProductController(IProductService productService, ILogger logger)
         {
             _mapper = new Mapper(MapperWebConfig.Configure());
             _productService = productService;
+            _logger = logger;
         }
 
         public ActionResult Index(int? page)
         {
+            _logger.Info($"Hello product index");
             ViewBag.CurrentPage = page ?? 1;
             return View();
         }
@@ -59,13 +63,16 @@ namespace Task5.Controllers
                     {
                         products = products.Where(x => x.Price.Equals(model.Price));
                     }
+                    _logger.Info($"{User.Identity.Name} filter product");
                     return PartialView("List", products.ToPagedList(1, products.Count() == 0 ? 1 : products.Count()));
 
                 }
+                _logger.Warn($"{User.Identity.Name} Products filter error");
                 return View();
             }
             catch
             {
+                _logger.Warn($"{User.Identity.Name} Products filter error");
                 return View("Error");
             }
         }
@@ -73,6 +80,7 @@ namespace Task5.Controllers
         [Authorize]
         public ActionResult Details(int id)
         {
+            _logger.Info($"{User} details product");
             return PartialView(_mapper.Map<ProductDTO, ProductViewModel>(_productService.FindById(id)));
         }
 
@@ -92,13 +100,16 @@ namespace Task5.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    _logger.Info($"{User.Identity.Name} create product");
                     _productService.Create(_mapper.Map<ProductViewModel, ProductDTO>(model));
                     return RedirectToAction("Index", new { page = page });
                 }
+                _logger.Warn($"{User.Identity.Name} Products create error");
                 return View();
             }
             catch
             {
+                _logger.Warn($"{User.Identity.Name} Products create error");
                 return View();
             }
         }
@@ -118,6 +129,7 @@ namespace Task5.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    _logger.Info($"{User.Identity.Name} edit product");
                     _productService.Update(_mapper.Map<ProductViewModel, ProductDTO>(model));
                     return RedirectToAction("Index", new { page = page });
                 }
@@ -125,6 +137,7 @@ namespace Task5.Controllers
             }
             catch
             {
+                _logger.Warn($"{User.Identity.Name} Products edit error");
                 return View();
             }
         }
@@ -142,23 +155,15 @@ namespace Task5.Controllers
         {
             try
             {
+                _logger.Info($"{User.Identity.Name} delete product");
                 _productService.Delete(id);
                 return RedirectToAction("Index", new { page = page });
             }
             catch
             {
+                _logger.Warn($"{User.Identity.Name} Products delete error");
                 return View();
             }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && _productService != null)
-            {
-                _productService.Dispose();               
-                _productService = null;
-            }
-            base.Dispose(disposing);
-        }
+        }        
     }
 }
