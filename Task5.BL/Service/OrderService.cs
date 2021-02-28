@@ -86,12 +86,12 @@ namespace Task5.BL.Service
 
         public IEnumerable<OrderDTO> GetOrdersByCustomerId(int id)
         {
-            return _mapper.Map<IEnumerable<Order>, IEnumerable<OrderDTO>>(Database.Orders.Get().Where(x => x.Customer.Id.Equals(id)));
+            return _mapper.Map<IEnumerable<Order>, IEnumerable<OrderDTO>>(Database.Customers.Get(x=>x.Id.Equals(id)).Orders);
         }
 
         public IEnumerable<OrderDTO> GetOrdersByManagerId(int id)
         {
-            return _mapper.Map<IEnumerable<Order>, IEnumerable<OrderDTO>>(Database.Orders.Get().Where(x => x.Manager.Id.Equals(id)));
+            return _mapper.Map<IEnumerable<Order>, IEnumerable<OrderDTO>>(Database.Managers.Get(x=>x.Id.Equals(id)).Order);
         }
 
         public void Dispose()
