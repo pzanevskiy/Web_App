@@ -1,14 +1,10 @@
 ﻿using AutoMapper;
 using PagedList;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Task5.BL.DTO;
-using Task5.BL.Service;
 using Task5.BL.Service.Interfaces;
-using Task5.DAL.UnitOfWork;
-using Task5.DAL.UnitOfWork.Interfaces;
 using Task5.Models.Customer;
 using Task5.Models.Filters;
 using Task5.Models.Manager;
@@ -20,21 +16,19 @@ namespace Task5.Controllers
 {
     public class OrderController : Controller
     {
-        private IUnitOfWork _uow;
         private IMapper _mapper;
         private IOrderService _orderService;
         private ICustomerService _customerService;
         private IManagerService _managerService;
         private IProductService _productService;
 
-        public OrderController()
+        public OrderController(IOrderService orderService, ICustomerService customerService, IManagerService managerService, IProductService productService)
         {
-            _uow = new EFUnitOfWork();
             _mapper = new Mapper(MapperWebConfig.Configure());
-            _orderService = new OrderService(_uow);
-            _customerService = new CustomerService(_uow);
-            _managerService = new ManagerService(_uow);
-            _productService = new ProductService(_uow);
+            _orderService = orderService;
+            _customerService = customerService;
+            _managerService = managerService;
+            _productService = productService;
         }
 
         public ActionResult Index(int? page)
@@ -51,7 +45,7 @@ namespace Task5.Controllers
                 ViewBag.CurrentPage = page;
                 return PartialView("List", orders.ToPagedList(page ?? 1, 3));
             }
-            catch (Exception e)
+            catch
             {
                 return View("Error");
             }
@@ -88,7 +82,7 @@ namespace Task5.Controllers
                 }
                 return View();
             }
-            catch (Exception e)
+            catch
             {
                 return View("Error");
             }
@@ -179,6 +173,17 @@ namespace Task5.Controllers
             {
                 return View();
             }
+        }
+
+        [HttpGet]
+        public JsonResult GetChartData()
+        {
+            var item = _orderService
+                .GetAll()
+                .GroupBy(x => x.Date.ToString("d"))
+                .Select(x => new object[] { x.Key.ToString(), x.Count() })
+                .ToArray();
+            return Json(item, JsonRequestBehavior.AllowGet);
         }
 
         protected override void Dispose(bool disposing)

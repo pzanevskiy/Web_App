@@ -1,0 +1,32 @@
+﻿<html>
+<head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['bar']});
+      google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Дата');
+            data.addColumn('number', 'Заказы');
+          $.get('@Url.Action("GetChartData", "Order")', null,
+                function (dataJSON, textStatus, jqXHR) {
+                        data.addRows(dataJSON);
+
+                        var options = {
+                            chart: {
+                                title: 'Заказы по дням',
+                                'width': 600,
+                                'height': 300
+                            }
+                    };
+                    var chart = new google.charts.Bar(document.getElementById('columnchart'));
+                        chart.draw(data, options);
+                });
+        };      
+    </script>
+</head>
+<body>
+    <div id="columnchart" style="width: 700px; height: 400px;"></div>
+</body>
+</html>

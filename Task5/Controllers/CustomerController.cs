@@ -1,14 +1,10 @@
 ﻿using AutoMapper;
 using PagedList;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Task5.BL.DTO;
-using Task5.BL.Service;
 using Task5.BL.Service.Interfaces;
-using Task5.DAL.UnitOfWork;
-using Task5.DAL.UnitOfWork.Interfaces;
 using Task5.Models.Customer;
 using Task5.Models.Filters;
 using Task5.Models.Order;
@@ -18,17 +14,15 @@ namespace Task5.Controllers
 {
     public class CustomerController : Controller
     {
-        private IUnitOfWork _uow;
         private IMapper _mapper;
         private ICustomerService _customerService;
         private IOrderService _orderService;
 
-        public CustomerController()
+        public CustomerController(ICustomerService customerSerivice, IOrderService orderService)
         {
-            _uow = new EFUnitOfWork();
             _mapper = new Mapper(MapperWebConfig.Configure());
-            _customerService = new CustomerService(_uow);
-            _orderService = new OrderService(_uow);
+            _customerService = customerSerivice;
+            _orderService = orderService;
         }
 
         public ActionResult Index(int? page)
@@ -45,7 +39,7 @@ namespace Task5.Controllers
                 ViewBag.CurrentPage = page;
                 return PartialView("List", customers.ToPagedList(page ?? 1, 3));
             }
-            catch (Exception e)
+            catch
             {
                 return View("Error");
             }
@@ -74,7 +68,7 @@ namespace Task5.Controllers
                 }
                 return View();
             }
-            catch (Exception e)
+            catch
             {
                 return View("Error");
             }

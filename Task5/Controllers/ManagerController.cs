@@ -1,14 +1,10 @@
 ﻿using AutoMapper;
 using PagedList;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Task5.BL.DTO;
-using Task5.BL.Service;
 using Task5.BL.Service.Interfaces;
-using Task5.DAL.UnitOfWork;
-using Task5.DAL.UnitOfWork.Interfaces;
 using Task5.Models.Filters;
 using Task5.Models.Manager;
 using Task5.Models.Order;
@@ -18,17 +14,15 @@ namespace Task5.Controllers
 {
     public class ManagerController : Controller
     {
-        private IUnitOfWork _uow;
         private IMapper _mapper;
         private IManagerService _managerService;
         private IOrderService _orderService;
 
-        public ManagerController()
+        public ManagerController(IManagerService managerService, IOrderService orderService)
         {
-            _uow = new EFUnitOfWork();
             _mapper = new Mapper(MapperWebConfig.Configure());
-            _managerService = new ManagerService(_uow);
-            _orderService = new OrderService(_uow);
+            _managerService = managerService;
+            _orderService = orderService;
         }
 
         public ActionResult Index(int? page)
@@ -45,7 +39,7 @@ namespace Task5.Controllers
                 ViewBag.CurrentPage = page;
                 return PartialView("List", managers.ToPagedList(page ?? 1, 3));
             }
-            catch (Exception e)
+            catch
             {
                 return View("Error");
             }
@@ -74,7 +68,7 @@ namespace Task5.Controllers
                 }
                 return View();
             }
-            catch (Exception e)
+            catch
             {
                 return View("Error");
             }
@@ -87,6 +81,7 @@ namespace Task5.Controllers
 
             return Json(item, JsonRequestBehavior.AllowGet);
         }
+
         [Authorize]
         public ActionResult Details(int id)
         {
